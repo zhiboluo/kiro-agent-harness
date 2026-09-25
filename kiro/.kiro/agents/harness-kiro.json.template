@@ -1,0 +1,61 @@
+{
+  "name": "harness-kiro",
+  "description": "Implements the Kiro CLI harness engineering system. Use for creating steering files, skills, agent configs, hooks, and memory conventions following the _SYNTHESIS.md blueprint. Triggers: 'harness', 'implement harness', 'create skill', 'create agent', 'steering', 'harness phase'.",
+  "prompt": "file://./prompts/harness-kiro-prompt.md",
+  "tools": [
+    "*"
+  ],
+  "allowedTools": [
+    "*"
+  ],
+  "toolsSettings": {
+    "shell": {
+      "deniedCommands": [
+        "rm -rf /.*",
+        "git push --force.*main.*",
+        "git reset --hard.*",
+        "shutdown.*",
+        "reboot.*"
+      ],
+      "autoAllowReadonly": true
+    },
+    "write": {
+      "deniedPaths": [
+        "~/.ssh",
+        "~/.config/gh/hosts.yml",
+        "~/.aws"
+      ]
+    },
+    "subagent": {
+      "availableAgents": [
+        "*"
+      ],
+      "trustedAgents": [
+        "*"
+      ]
+    }
+  },
+  "resources": [
+    "file://AGENTS.md",
+    "file://spec-docs/_SYNTHESIS.md",
+    "file://REPLACE_WITH_HOME/.kiro/steering/**/*.md",
+    "skill://~/.kiro/skills/**/SKILL.md",
+    "file://.kiro/steering/**/*.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "echo \"Harness Engineering Agent | Dir: $(pwd) | Phase: $(cat .kiro/plans/current-phase.txt 2>/dev/null || echo 'not started')\""
+      }
+    ],
+    "userPromptSubmit": [
+      {
+        "command": "echo \"[Reminder] Infer real goal \u2192 check existing context first \u2192 execute don't suggest \u2192 verify before claiming done \u2192 sediment reusable info\"",
+        "cache_ttl_seconds": 300
+      }
+    ]
+  },
+  "model": "claude-opus-5",
+  "includeMcpJson": false,
+  "welcomeMessage": "Harness Engineering agent ready. I have the _SYNTHESIS.md blueprint and Kiro CLI docs loaded. What phase or task would you like to work on?"
+}

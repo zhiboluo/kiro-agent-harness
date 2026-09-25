@@ -1,0 +1,22 @@
+# Ephemeral session handoffs (auto-pruned, 7-day TTL)
+kiro/.kiro/memory/sessions/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Kiro session data (local only)
+.kiro/sessions/
+kiro/.kiro/agents/harness-kiro.json

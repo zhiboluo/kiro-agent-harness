@@ -1,0 +1,16 @@
+---
+scope: project
+updated: 2026-01-01
+version: "0.1"
+---
+
+# PROJECT_NAME
+
+## What This Is
+DESCRIBE_YOUR_PROJECT_HERE.
+
+## Tech Stack
+LIST_LANGUAGES_FRAMEWORKS_DEPENDENCIES.
+
+## Key Conventions
+LIST_CODING_PATTERNS_NAMING_FILE_ORGANIZATION.

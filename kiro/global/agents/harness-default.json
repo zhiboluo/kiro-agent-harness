@@ -1,0 +1,72 @@
+{
+  "name": "harness-default",
+  "description": "Personal harness agent. Loads steering files, skills, and enforces safety via toolsSettings.",
+  "prompt": "file://~/.kiro/agents/prompts/harness-default-prompt.md",
+  "tools": [
+    "*"
+  ],
+  "allowedTools": [
+    "*"
+  ],
+  "toolsSettings": {
+    "shell": {
+      "deniedCommands": [
+        "rm -rf.*",
+        "rm -r /.*",
+        "git push --force.*",
+        "git push.*--force.*",
+        "git reset --hard.*",
+        "git clean -f.*",
+        "git branch -D.*",
+        "shutdown.*",
+        "reboot.*",
+        "chmod -R 777.*",
+        "mkfs.*",
+        "dd if=.*of=/dev.*",
+        "> /dev/sd.*",
+        "rm -fr.*",
+        "find.*-delete.*",
+        "find.*-exec.*rm.*"
+      ],
+      "autoAllowReadonly": true
+    },
+    "write": {
+      "deniedPaths": [
+        "~/.ssh",
+        "~/.config/gh/hosts.yml",
+        "~/.aws",
+        "~/.kube/config",
+        "~/.docker/config.json"
+      ]
+    },
+    "subagent": {
+      "availableAgents": [
+        "worker",
+        "reviewer",
+        "researcher",
+        "planner"
+      ],
+      "trustedAgents": [
+        "reviewer",
+        "researcher"
+      ]
+    }
+  },
+  "resources": [
+    "file://~/.kiro/steering/**/*.md",
+    "file://.kiro/steering/**/*.md",
+    "file://.kiro/memory/INDEX.md",
+    "file://~/.kiro/memory/INDEX.md",
+    "skill://~/.kiro/skills/**/SKILL.md",
+    "skill://.kiro/skills/**/SKILL.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "echo \"OS: $(uname -s) | Dir: $(pwd) | Branch: $(git branch --show-current 2>/dev/null || echo N/A)\""
+      }
+    ]
+  },
+  "model": "claude-opus-5",
+  "includeMcpJson": true
+}
