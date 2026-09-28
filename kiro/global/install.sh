@@ -106,17 +106,16 @@ portable_sed_i() {
     fi
 }
 
-# Fix paths in agent configs to match current user
+# Fix paths in the hub agent config to match current user
 echo "Updating paths for current user ($USER @ $HOME)..."
-for f in "$KIRO_DIR/agents/harness-default.json"; do
-    if [ -f "$f" ]; then
-        # Fix file:// tilde paths (tilde doesn't expand for file:// URIs)
-        portable_sed_i "s|file://~/|file://$HOME/|g" "$f"
-        # Fix prompt file:// tilde path
-        portable_sed_i "s|file://~/.kiro|file://$HOME/.kiro|g" "$f"
-        echo "  ✓ Updated paths in $(basename "$f")"
-    fi
-done
+f="$KIRO_DIR/agents/harness-default.json"
+if [ -f "$f" ]; then
+    # Fix file:// tilde paths (tilde doesn't expand for file:// URIs)
+    portable_sed_i "s|file://~/|file://$HOME/|g" "$f"
+    # Fix prompt file:// tilde path
+    portable_sed_i "s|file://~/.kiro|file://$HOME/.kiro|g" "$f"
+    echo "  ✓ Updated paths in $(basename "$f")"
+fi
 echo ""
 
 echo "Done: $INSTALLED installed, $SKIPPED skipped."
