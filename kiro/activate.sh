@@ -29,12 +29,8 @@ if [ -f "$TARGET" ]; then
     fi
 fi
 
-# Portable sed: detect GNU vs BSD
-if sed --version 2>/dev/null | grep -q GNU; then
-    sed "s|REPLACE_WITH_HOME|$HOME|g" "$TEMPLATE" > "$TARGET"
-else
-    sed "s|REPLACE_WITH_HOME|$HOME|g" "$TEMPLATE" > "$TARGET"
-fi
+# Stream-redirect sed is portable across GNU/BSD — no in-place flag needed
+sed "s|REPLACE_WITH_HOME|$HOME|g" "$TEMPLATE" > "$TARGET"
 
 echo "✓ Generated $TARGET"
 echo "  HOME=$HOME substituted"

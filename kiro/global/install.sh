@@ -106,15 +106,6 @@ portable_sed_i() {
     fi
 }
 
-# Portable sha256 (GNU sha256sum vs BSD shasum)
-portable_sha256() {
-    if command -v sha256sum >/dev/null 2>&1; then
-        sha256sum
-    else
-        shasum -a 256
-    fi
-}
-
 # Fix paths in agent configs to match current user
 echo "Updating paths for current user ($USER @ $HOME)..."
 for f in "$KIRO_DIR/agents/harness-default.json"; do
