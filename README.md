@@ -4,7 +4,7 @@
 
 A structured agent configuration system for Kiro CLI, implementing the [_SYNTHESIS.md](kiro/spec-docs/_SYNTHESIS.md) blueprint.
 
-**Status:** All 3 phases complete. External review remediated. 152 test assertions passing.
+**Status:** All 3 phases complete. External review remediated. 162 test assertions passing.
 
 ## What This Is
 
@@ -53,9 +53,11 @@ Absolute paths in agent configs are updated to match the current user's `$HOME`.
 ├── steering/          # 5 files: AGENTS.md, base-constraints, security, documentation, graphify
 ├── agents/            # 5 agents: harness-default, worker, reviewer, researcher, planner
 │   └── prompts/       # harness-default-prompt.md
-├── skills/            # 8 skills: session-memory, context-budget-audit, research-first,
+├── skills/            # 10 skills: session-memory, context-budget-audit, research-first,
 │                      #   project-harness-init, session-handoff, adversarial-review,
-│                      #   harness-evolution, skill-effectiveness-eval
+│                      #   harness-evolution, skill-effectiveness-eval,
+│                      #   dispatching-parallel-agents, verification-before-completion
+├── hooks/             # block-credentials.sh — preToolUse guard (exit 2 blocks)
 └── memory/            # Empty structure — your decisions/patterns accumulate here
 ```
 
@@ -82,6 +84,14 @@ On other machines, pull and re-install:
 git pull
 bash kiro/global/install.sh --force
 ```
+
+### Upstream & deployment
+
+This repository is the upstream — harness development happens here. Machines consume it:
+
+- Deploy with `bash kiro/global/install.sh` (plus `cd kiro && bash activate.sh` for this project's agent)
+- Machine-local state stays on the machine and is never committed back: `~/.kiro/memory/` entries, extra installed skills, `settings/cli.json`, the generated `harness-kiro.json`
+- Kiro CLI 3.x note: hooks move from agent-config JSON fields to standalone `.kiro/hooks/*.json` files — run `kiro-cli agent migrate` when upgrading. The bundled `preToolUse` guard uses the 2.x embedded format.
 
 ## Quick Start
 
@@ -153,7 +163,8 @@ kiro-agent-harness/
 │   │   │   ├── planner.json
 │   │   │   └── prompts/
 │   │   │       └── harness-default-prompt.md
-│   │   ├── skills/                  # 8 harness skills
+│   │   ├── hooks/                   # block-credentials.sh — preToolUse guard
+│   │   ├── skills/                  # 10 harness skills
 │   │   │   ├── session-memory/
 │   │   │   ├── context-budget-audit/
 │   │   │   ├── research-first/
@@ -161,7 +172,9 @@ kiro-agent-harness/
 │   │   │   ├── session-handoff/
 │   │   │   ├── adversarial-review/
 │   │   │   ├── harness-evolution/
-│   │   │   └── skill-effectiveness-eval/
+│   │   │   ├── skill-effectiveness-eval/
+│   │   │   ├── dispatching-parallel-agents/
+│   │   │   └── verification-before-completion/
 │   │   └── memory/                  # Empty memory structure (fills as you use it)
 │   │       ├── INDEX.md
 │   │       ├── decisions/
@@ -186,7 +199,7 @@ kiro-agent-harness/
 │   ├── activate.sh                  # Generates harness-kiro.json from template
 │   ├── AGENTS.md                    # This project's agent instructions
 │   ├── spec-docs/                   # Blueprint (_SYNTHESIS.md)
-│   └── tests/                       # 9 repo test scripts + 1 machine audit (152 assertions)
+│   └── tests/                       # 9 repo test scripts + 1 machine audit (162 assertions)
 ```
 
 **Global harness (installed to ~/.kiro/):**
@@ -321,7 +334,7 @@ Documented in [_SYNTHESIS.md §11](kiro/spec-docs/_SYNTHESIS.md):
 ```bash
 cd kiro
 for t in tests/test-*.sh; do bash "$t"; done
-# Expected: 152 passed, 0 failed
+# Expected: 162 passed, 0 failed
 ```
 
 ## Key Files
