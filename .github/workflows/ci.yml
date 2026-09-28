@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    name: tests (${{ matrix.os }}, "${{ matrix.co_path }}")
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # GNU userland, normal path
+          - os: ubuntu-latest
+            co_path: repo
+          # Spaces-in-path guard: the whole suite once broke on unquoted paths
+          - os: ubuntu-latest
+            co_path: My Repos/repo
+          # BSD userland + spaces: catches sed/shasum portability regressions
+          - os: macos-latest
+            co_path: My Repos/repo
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ${{ matrix.co_path }}
+
+      - name: Run test suite
+        env:
+          # Optional secret: newline-separated private tokens. When set, the
+          # leak-scan test greps tracked files for them (GitHub masks the
+          # values in logs). Unset for forks — the test skips itself.
+          LEAK_TOKENS: ${{ secrets.LEAK_TOKENS }}
+        run: |
+          cd "$GITHUB_WORKSPACE/${{ matrix.co_path }}/kiro"
+          for t in tests/test-*.sh; do
+            echo "=== $t ==="
+            bash "$t"
+          done
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: shellcheck (errors only for now)
+        run: shellcheck --severity=error kiro/global/install.sh kiro/templates/setup-project.sh kiro/activate.sh kiro/tests/*.sh
