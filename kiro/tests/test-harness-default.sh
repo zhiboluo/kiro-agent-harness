@@ -19,6 +19,8 @@ assert "python3 -c \"import json; d=json.load(open('$F')); assert 'resources' in
 assert "python3 -c \"import json; d=json.load(open('$F')); assert 'deniedCommands' in d['toolsSettings']['shell']\"" "has deniedCommands"
 assert "python3 -c \"import json; d=json.load(open('$F')); assert 'agentSpawn' in d['hooks']\"" "has agentSpawn hook"
 assert "python3 -c \"import json; d=json.load(open('$F')); assert d['model'].startswith('claude-opus')\"" "model is opus"
+assert "python3 -c \"import json; d=json.load(open('$F')); assert 'git checkout -- .*' in d['toolsSettings']['shell']['deniedCommands']\"" "denies git checkout -- (work discard)"
+assert "python3 -c \"import json; d=json.load(open('$F')); assert 'git restore .*' in d['toolsSettings']['shell']['deniedCommands']\"" "denies git restore (work discard)"
 
 echo ""; echo "Results: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ] && exit 0 || exit 1
