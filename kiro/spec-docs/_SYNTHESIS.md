@@ -1,3 +1,11 @@
+---
+type: synthesis
+generated: true
+author: harness-kiro
+created: 2026-05-28
+version: "1.1"
+---
+
 # Harness Engineering Synthesis
 ## Cross-Repo Analysis of 15 Harness Engineering Projects
 

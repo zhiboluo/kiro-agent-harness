@@ -17,6 +17,8 @@ assert "[ \$(ls \"$GLOBAL/agents/\"*.json | wc -l) -ge 5 ]" "5 harness agent con
 assert "[ -f \"$GLOBAL/steering/AGENTS.md\" ]" "global AGENTS.md exists"
 assert "[ -f \"$GLOBAL/steering/base-constraints.md\" ]" "base-constraints exists"
 assert "[ -f \"$GLOBAL/steering/security.md\" ]" "security exists"
+SYN="$(cd "$(dirname "${BASH_SOURCE[0]}")/../spec-docs" && pwd)/_SYNTHESIS.md"
+assert "head -1 \"$SYN\" | grep -q '^---$'" "spec-docs carry Tier 2 frontmatter"
 
 echo ""; echo "Results: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ] && exit 0 || exit 1

@@ -1,8 +1,10 @@
 # Kiro Agent Harness
 
+[![CI](https://github.com/zhiboluo/kiro-agent-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/zhiboluo/kiro-agent-harness/actions/workflows/ci.yml)
+
 A structured agent configuration system for Kiro CLI, implementing the [_SYNTHESIS.md](kiro/spec-docs/_SYNTHESIS.md) blueprint.
 
-**Status:** All 3 phases complete. External review remediated. 148 test assertions passing.
+**Status:** All 3 phases complete. External review remediated. 152 test assertions passing.
 
 ## What This Is
 
@@ -11,6 +13,8 @@ A harness that makes Kiro CLI agents more reliable through:
 - **Agent configs** — hub agent + 4 specialized subagents with minimum privilege
 - **Skills** — 10 on-demand workflow skills
 - **Memory conventions** — cross-session persistence of decisions and patterns (starts empty; your sediment accumulates)
+
+**Good fit:** you work across several projects from a terminal, want consistent agent behavior (security boundaries, evidence-before-done, scope discipline) without re-prompting for it every session, and want decisions to persist across sessions. Less useful if you only use an agent occasionally in one repo — the built-in defaults are fine there.
 
 ## Installation
 
@@ -60,7 +64,7 @@ Absolute paths in agent configs are updated to match the current user's `$HOME`.
 1. Push latest changes: `git push`
 2. On new machine: clone + run `install.sh`
 3. Update `~/.kiro/steering/AGENTS.md` with machine-specific preferences
-4. Install any additional skills not managed by this harness (graphify, etc.)
+4. Install any additional skills not managed by this harness (graphify, etc. — optional external tools; the graphify steering rule degrades gracefully when `graphify-out/` is absent)
 
 ### Keeping in sync
 
@@ -99,12 +103,39 @@ kiro-cli chat --agent harness-kiro
 > evaluate skill          # A/B skill comparison
 ```
 
+### What it looks like (illustrative)
+
+```text
+~$ kiro-cli chat
+[your-canary] Ready.
+
+you: how does the build system cache dependencies?
+[your-canary] research-first — reading build files first ...
+              findings: cache lives in .turbo/, keyed by content hash (turbo.json:14)
+
+you: remember that we use Bun, not npm — stop suggesting npm
+[your-canary] session-memory — written to .kiro/memory/decisions/2026-09-28-package-manager.md
+              and indexed in .kiro/memory/INDEX.md
+
+you: adversarial review the new retry logic
+[your-canary] adversarial-review — dispatching 3 critics in parallel
+              (skeptic / security auditor / scope guardian) ...
+              verdict: REVISE — 2 issues, see merge report
+```
+
+The bracketed prefix is the canary from your `AGENTS.md` — if it ever disappears from a
+response, that steering file failed to load and the session needs attention.
+
 ## Structure
 
 ```
 kiro-agent-harness/
 ├── README.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── LICENSE
 ├── .gitignore
+├── .github/workflows/ci.yml       # Ubuntu/macOS matrix + shellcheck
 ├── kiro/
 │   ├── global/                      # Portable harness → deploy to ~/.kiro/
 │   │   ├── install.sh               # Deploy script
@@ -155,7 +186,7 @@ kiro-agent-harness/
 │   ├── activate.sh                  # Generates harness-kiro.json from template
 │   ├── AGENTS.md                    # This project's agent instructions
 │   ├── spec-docs/                   # Blueprint (_SYNTHESIS.md)
-│   └── tests/                       # 8 repo test scripts + 1 machine audit (148 assertions)
+│   └── tests/                       # 9 repo test scripts + 1 machine audit (152 assertions)
 ```
 
 **Global harness (installed to ~/.kiro/):**
@@ -290,7 +321,7 @@ Documented in [_SYNTHESIS.md §11](kiro/spec-docs/_SYNTHESIS.md):
 ```bash
 cd kiro
 for t in tests/test-*.sh; do bash "$t"; done
-# Expected: 148 passed, 0 failed
+# Expected: 152 passed, 0 failed
 ```
 
 ## Key Files
