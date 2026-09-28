@@ -47,4 +47,4 @@ jobs:
       - name: Install shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: shellcheck (errors only for now)
-        run: shellcheck --severity=error kiro/global/install.sh kiro/templates/setup-project.sh kiro/activate.sh kiro/tests/*.sh
+        run: shellcheck --severity=error kiro/global/install.sh kiro/global/hooks/*.sh kiro/templates/setup-project.sh kiro/activate.sh kiro/tests/*.sh

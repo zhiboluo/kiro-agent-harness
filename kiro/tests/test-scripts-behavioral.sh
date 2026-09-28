@@ -24,6 +24,7 @@ assert "[ -f \"$FAKE_HOME/.kiro/memory/INDEX.md\" ]" "install: memory deployed"
 # Verify tilde paths were converted
 assert "! grep -q 'file://~/' \"$FAKE_HOME/.kiro/agents/harness-default.json\"" "install: no file://~ tilde left"
 assert "grep -q \"file://$FAKE_HOME\" \"$FAKE_HOME/.kiro/agents/harness-default.json\"" "install: absolute path injected"
+assert "[ -f \"$FAKE_HOME/.kiro/hooks/block-credentials.sh\" ]" "install: hook script deployed"
 
 # Test --force mode
 echo "MODIFIED" > "$FAKE_HOME/.kiro/steering/AGENTS.md"
@@ -58,6 +59,15 @@ bash "$REPO_ROOT/templates/setup-project.sh" "$TMPDIR" "test-app" >/dev/null 2>&
 assert "[ \$(find \"$TMPDIR\" -name 'AGENTS.md' | wc -l) -eq 1 ]" "scaffold: doesn't duplicate AGENTS.md"
 
 rm -r "$TMPDIR"
+
+# --- block-credentials.sh hook tests ---
+echo ""
+echo "=== block-credentials.sh hook tests ==="
+HOOK="$REPO_ROOT/global/hooks/block-credentials.sh"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"src/main.go\"}}' | sh \"$HOOK\" >/dev/null 2>&1" "hook: allows normal reads"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"/home/u/.ssh/id_rsa\"}}' | sh \"$HOOK\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook: blocks .ssh path (exit 2)"
+assert "printf '%s' '{\"tool_name\":\"shell\",\"tool_input\":{\"command\":\"cat .env.local\"}}' | sh \"$HOOK\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook: blocks .env via shell (exit 2)"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"src/environments/prod.ts\"}}' | sh \"$HOOK\" >/dev/null 2>&1" "hook: no false positive on 'environments'"
 
 echo ""; echo "Results: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ] && exit 0 || exit 1

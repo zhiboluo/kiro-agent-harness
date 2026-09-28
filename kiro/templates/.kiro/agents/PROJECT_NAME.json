@@ -2,8 +2,12 @@
   "name": "PROJECT_NAME",
   "description": "Agent for PROJECT_NAME. DESCRIBE_WHAT_THIS_AGENT_DOES.",
   "prompt": "file://./prompts/PROJECT_NAME-prompt.md",
-  "tools": ["*"],
-  "allowedTools": ["*"],
+  "tools": [
+    "*"
+  ],
+  "allowedTools": [
+    "*"
+  ],
   "toolsSettings": {
     "shell": {
       "deniedCommands": [
@@ -16,11 +20,23 @@
       "autoAllowReadonly": true
     },
     "write": {
-      "deniedPaths": ["~/.ssh", "~/.config/gh/hosts.yml", "~/.aws"]
+      "deniedPaths": [
+        "~/.ssh",
+        "~/.config/gh/hosts.yml",
+        "~/.aws"
+      ]
     },
     "subagent": {
-      "availableAgents": ["worker", "reviewer", "researcher", "planner"],
-      "trustedAgents": ["reviewer", "researcher"]
+      "availableAgents": [
+        "worker",
+        "reviewer",
+        "researcher",
+        "planner"
+      ],
+      "trustedAgents": [
+        "reviewer",
+        "researcher"
+      ]
     }
   },
   "resources": [
@@ -35,6 +51,12 @@
     "agentSpawn": [
       {
         "command": "echo \"Dir: $(pwd) | Branch: $(git branch --show-current 2>/dev/null || echo N/A)\""
+      }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "*",
+        "command": "sh \"$HOME/.kiro/hooks/block-credentials.sh\""
       }
     ]
   },

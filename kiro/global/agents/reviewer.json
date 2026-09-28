@@ -36,5 +36,13 @@
       ]
     }
   },
-  "model": "claude-sonnet-4.6"
+  "model": "claude-sonnet-4.6",
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "*",
+        "command": "sh \"$HOME/.kiro/hooks/block-credentials.sh\""
+      }
+    ]
+  }
 }

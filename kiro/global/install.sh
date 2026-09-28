@@ -76,6 +76,15 @@ for f in "$GLOBAL_DIR"/agents/prompts/*.md; do
 done
 echo ""
 
+# Hook scripts
+echo "Hook scripts:"
+for f in "$GLOBAL_DIR"/hooks/*; do
+    [ -f "$f" ] || continue
+    name=$(basename "$f")
+    install_file "$f" "$KIRO_DIR/hooks/$name"
+done
+echo ""
+
 # Skills
 echo "Skills:"
 for d in "$GLOBAL_DIR"/skills/*/; do

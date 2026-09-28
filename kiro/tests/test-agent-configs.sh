@@ -13,6 +13,7 @@ assert() {
 for agent in worker reviewer researcher planner; do
   assert "[ -f \"$AGENTS/$agent.json\" ]" "$agent.json exists"
   assert "python3 -c \"import json; d=json.load(open('$AGENTS/$agent.json')); assert all(k in d for k in ['name','description','prompt','tools'])\"" "$agent.json has required fields"
+  assert "python3 -c \"import json; d=json.load(open('$AGENTS/$agent.json')); assert 'preToolUse' in d['hooks']\"" "$agent.json has preToolUse hook"
 done
 
 # Role-specific checks
