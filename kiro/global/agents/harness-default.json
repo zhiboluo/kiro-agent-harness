@@ -28,7 +28,9 @@
         "find.*-delete.*",
         "find.*-exec.*rm.*",
         "git checkout -- .*",
-        "git restore .*"
+        "git restore .*",
+        "git checkout \\..*",
+        "git checkout HEAD -- .*"
       ],
       "autoAllowReadonly": true
     },
@@ -71,7 +73,7 @@
     "preToolUse": [
       {
         "matcher": "*",
-        "command": "sh \"$HOME/.kiro/hooks/block-credentials.sh\""
+        "command": "s=\"$HOME/.kiro/hooks/block-credentials.sh\"; [ -f \"$s\" ] || exit 0; sh \"$s\""
       }
     ]
   },

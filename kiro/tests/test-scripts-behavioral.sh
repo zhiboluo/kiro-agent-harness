@@ -68,6 +68,20 @@ assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"src/main
 assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"/home/u/.ssh/id_rsa\"}}' | sh \"$HOOK\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook: blocks .ssh path (exit 2)"
 assert "printf '%s' '{\"tool_name\":\"shell\",\"tool_input\":{\"command\":\"cat .env.local\"}}' | sh \"$HOOK\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook: blocks .env via shell (exit 2)"
 assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"src/environments/prod.ts\"}}' | sh \"$HOOK\" >/dev/null 2>&1" "hook: no false positive on 'environments'"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"config/.env.example\"}}' | sh \"$HOOK\" >/dev/null 2>&1" "hook: allows .env.example template"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"keys/id_rsa.pub\"}}' | sh \"$HOOK\" >/dev/null 2>&1" "hook: allows public keys outside .ssh (*.pub)"
+assert "printf '%s' '{\"tool_name\":\"read\",\"tool_input\":{\"path\":\"~/.ssh/id_rsa.pub\"}}' | sh \"$HOOK\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook: blocks everything under .ssh (incl. .pub)"
+
+# Hook command wrapper: silent fail-open when harness missing, exit-2 pass-through when installed
+EMPTY_HOME=$(mktemp -d)
+HOOKHOME=$(mktemp -d)
+mkdir -p "$HOOKHOME/.kiro/hooks"
+cp "$REPO_ROOT/global/hooks/block-credentials.sh" "$HOOKHOME/.kiro/hooks/"
+export HOOKCMD='s="$HOME/.kiro/hooks/block-credentials.sh"; [ -f "$s" ] || exit 0; sh "$s"'
+assert "HOME=\"$EMPTY_HOME\" sh -c \"\$HOOKCMD\" </dev/null >/dev/null 2>&1" "hook command: missing script fails open silently"
+assert "printf '%s' '{\"path\":\"src/main.go\"}' | HOME=\"$HOOKHOME\" sh -c \"\$HOOKCMD\" >/dev/null 2>&1" "hook command: installed + benign payload → exit 0"
+assert "printf '%s' '{\"path\":\"/home/u/.ssh/id_rsa\"}' | HOME=\"$HOOKHOME\" sh -c \"\$HOOKCMD\" >/dev/null 2>&1; [ \$? -eq 2 ]" "hook command: installed + credential path → exit 2 blocks"
+rm -rf "$EMPTY_HOME" "$HOOKHOME"
 
 echo ""; echo "Results: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ] && exit 0 || exit 1

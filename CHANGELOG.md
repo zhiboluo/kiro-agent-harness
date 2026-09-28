@@ -6,8 +6,8 @@ Notable changes to this project. Versions follow semver-lite.
 
 ### Added
 - CI: GitHub Actions — Ubuntu/macOS test matrix including a spaces-in-path checkout leg; shellcheck job (error severity)
-- Tests: opt-in leak scan (`LEAK_TOKENS` env / CI secret), denylist coverage for `git checkout --` / `git restore`, spec-docs frontmatter check, behavioral tests for the credential hook — suite now 162 assertions
-- Security: `preToolUse` credential-blocking hook (`hooks/block-credentials.sh`) on all 5 agents and the project template — exit 2 blocks tool calls touching `.ssh`/`.aws`/`.kube/config`/`.env`/private keys per the Kiro CLI 2.x hook contract; deployed by `install.sh`
+- Tests: opt-in leak scan (`LEAK_TOKENS` env / CI secret), denylist coverage for work-discarding git commands (`git checkout --`/`.`/`HEAD --`, `git restore`), spec-docs frontmatter check, behavioral tests for the credential hook incl. fail-open and block pass-through — suite now 170 assertions
+- Security: `preToolUse` credential-blocking hook (`hooks/block-credentials.sh`) on all agents and templates — exit 2 blocks tool calls touching `.ssh`/`.aws`/`.kube/config`/`.env`/private keys/credentials.json per the Kiro CLI 2.x hook contract; `.env.example` and `*.pub` outside `.ssh` are exempted; fails open silently on machines without the harness installed; deployed by `install.sh`
 - CONTRIBUTING.md
 
 ### Changed

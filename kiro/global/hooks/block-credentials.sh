@@ -8,7 +8,10 @@
 #
 # Patterns are deliberately recall-leaning: a false positive costs the agent
 # one visible block message; a false negative leaks a credential.
+# Known benign near-misses are exempted before matching: .env.example
+# templates (contain no secrets) and public keys (*.pub).
 input=$(cat)
+input=$(printf '%s' "$input" | sed -e 's/\.env\.example//g' -e 's/id_rsa\.pub//g' -e 's/id_ed25519\.pub//g' -e 's/id_ecdsa\.pub//g')
 case "$input" in
     *".ssh/"*|*".aws/"*|*".kube/config"*|*"gh/hosts.yml"*|*".docker/config.json"*|\
     *".env"*|*"id_rsa"*|*"id_ed25519"*|*"id_ecdsa"*|*"credentials.json"*)

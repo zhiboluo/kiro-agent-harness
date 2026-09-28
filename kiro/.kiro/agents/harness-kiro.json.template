@@ -50,8 +50,14 @@
     ],
     "userPromptSubmit": [
       {
-        "command": "echo \"[Reminder] Infer real goal \u2192 check existing context first \u2192 execute don't suggest \u2192 verify before claiming done \u2192 sediment reusable info\"",
+        "command": "echo \"[Reminder] Infer real goal → check existing context first → execute don't suggest → verify before claiming done → sediment reusable info\"",
         "cache_ttl_seconds": 300
+      }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "*",
+        "command": "s=\"$HOME/.kiro/hooks/block-credentials.sh\"; [ -f \"$s\" ] || exit 0; sh \"$s\""
       }
     ]
   },

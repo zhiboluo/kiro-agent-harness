@@ -4,7 +4,7 @@
 
 A structured agent configuration system for Kiro CLI, implementing the [_SYNTHESIS.md](kiro/spec-docs/_SYNTHESIS.md) blueprint.
 
-**Status:** All 3 phases complete. External review remediated. 162 test assertions passing.
+**Status:** All 3 phases complete. External review remediated. 170 test assertions passing.
 
 ## What This Is
 
@@ -199,7 +199,7 @@ kiro-agent-harness/
 │   ├── activate.sh                  # Generates harness-kiro.json from template
 │   ├── AGENTS.md                    # This project's agent instructions
 │   ├── spec-docs/                   # Blueprint (_SYNTHESIS.md)
-│   └── tests/                       # 9 repo test scripts + 1 machine audit (162 assertions)
+│   └── tests/                       # 9 repo test scripts + 1 machine audit (170 assertions)
 ```
 
 **Global harness (installed to ~/.kiro/):**
@@ -334,7 +334,7 @@ Documented in [_SYNTHESIS.md §11](kiro/spec-docs/_SYNTHESIS.md):
 ```bash
 cd kiro
 for t in tests/test-*.sh; do bash "$t"; done
-# Expected: 162 passed, 0 failed
+# Expected: 170 passed, 0 failed
 ```
 
 ## Key Files
